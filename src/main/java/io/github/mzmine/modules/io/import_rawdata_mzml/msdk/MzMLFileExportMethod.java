@@ -457,7 +457,7 @@ public class MzMLFileExportMethod implements MSDKMethod<Void> {
 
         // <binaryDataArray> (intensity)
         intensityBuffer =
-            MzMLPeaksEncoder.encodeFloat(scan.getIntensityValues(), floatArrayCompression);
+            MzMLPeaksEncoder.encodeDouble(scan.getIntensityValues(), floatArrayCompression);
         xmlStreamWriter.writeStartElement(MzMLTags.TAG_BINARY_DATA_ARRAY);
         xmlStreamWriter.writeAttribute(MzMLTags.ATTR_ENCODED_LENGTH,
             String.valueOf(intensityBuffer.length));

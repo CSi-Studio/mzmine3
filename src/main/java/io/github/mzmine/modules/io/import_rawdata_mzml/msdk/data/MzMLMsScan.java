@@ -75,7 +75,7 @@ public class MzMLMsScan implements MsScan {
   private Range<Double> mzRange;
   private Range<Double> mzScanWindowRange;
   private double[] mzValues;
-  private float[] intensityValues;
+  private double[] intensityValues;
   private @NotNull InputStream inputStream;
 
   /**
@@ -272,7 +272,7 @@ public class MzMLMsScan implements MsScan {
    * {@inheritDoc}
    */
   @Override
-  public float[] getIntensityValues(float[] array) {
+  public double[] getIntensityValues(double[] array) {
     if (intensityValues == null) {
       if (getIntensityBinaryDataInfo().getArrayLength() != numOfDataPoints) {
         logger.warning(
@@ -281,7 +281,7 @@ public class MzMLMsScan implements MsScan {
       }
 
       try {
-        intensityValues = MzMLPeaksDecoder.decodeToFloat(inputStream, getIntensityBinaryDataInfo(),
+        intensityValues = MzMLPeaksDecoder.decodeToDouble(inputStream, getIntensityBinaryDataInfo(),
             array);
       } catch (Exception e) {
         throw (new MSDKRuntimeException(e));
@@ -289,7 +289,7 @@ public class MzMLMsScan implements MsScan {
     }
 
     if (array == null || array.length < numOfDataPoints) {
-      array = new float[numOfDataPoints];
+      array = new double[numOfDataPoints];
 
       System.arraycopy(intensityValues, 0, array, 0, numOfDataPoints);
     }

@@ -54,7 +54,7 @@ public class MsdkScanWrapper implements Scan {
   private final MsScan scan;
   private final MsMsInfo msMsInfo;
   private final double[] mzs;
-  private final float[] intensities;
+  private final double[] intensities;
 
   public MsdkScanWrapper(MsScan scan) {
     this.scan = scan;

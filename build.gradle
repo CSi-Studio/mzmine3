@@ -285,6 +285,8 @@ configurations.all {
     exclude group: "cplex", module: "cplex"
     exclude group: "org.checkerframework", module: "checker-qual"
     exclude group: "javax.annotation", module: "javax.annotation-api"
+    exclude group: "io.github.msdk", module: "msdk-datamodel"
+    exclude group: "io.github.msdk", module: "msdk-spectra-centroidprofiledetection"
 }
 
 

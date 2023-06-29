@@ -120,7 +120,7 @@ public class ConversionUtils {
    */
   public static Scan msdkScanToSimpleScan(RawDataFile rawDataFile, MzMLMsScan scan) {
     double[] mzs = scan.getMzValues();
-    double[] intensities = convertFloatsToDoubles(scan.getIntensityValues());
+    double[] intensities = scan.getIntensityValues();
     return msdkScanToSimpleScan(rawDataFile, scan, mzs, intensities,
         ConversionUtils.msdkToMZmineSpectrumType(scan.getSpectrumType()));
   }
@@ -166,7 +166,7 @@ public class ConversionUtils {
 
   public static BuildingMobilityScan msdkScanToMobilityScan(int scannum, MsScan scan) {
     return new BuildingMobilityScan(scannum, scan.getMzValues(),
-        convertFloatsToDoubles(scan.getIntensityValues()));
+            scan.getIntensityValues());
   }
 
   /**

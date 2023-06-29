@@ -88,11 +88,11 @@ public class MZmineToMSDKMsScan implements MsScan {
   }
 
   @Override
-  public float[] getIntensityValues(float[] array) {
+  public double[] getIntensityValues(double[] array) {
     if (array == null || array.length < mzmineScan.getNumberOfDataPoints())
-      array = new float[mzmineScan.getNumberOfDataPoints()];
+      array = new double[mzmineScan.getNumberOfDataPoints()];
     for (int i = 0; i < mzmineScan.getNumberOfDataPoints(); i++) {
-      array[i] = (float) mzmineScan.getIntensityValue(i);
+      array[i] = mzmineScan.getIntensityValue(i);
     }
     return array;
   }
