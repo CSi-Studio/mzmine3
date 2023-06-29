@@ -1,0 +1,110 @@
+package io.github.mzmine.modules.io.import_rawdata_mzml;
+
+import io.github.msdk.MSDKException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.DataFormatException;
+
+public class PrecisionControlTask {
+    /**
+     * Converts a base64 encoded mz or intensity string used in mzML files to a precision-defined array of double-precision floating point numbers
+     *
+     */
+    public static int numCount = 0;
+    public static int intCount = 0;
+
+    public static double precisionControl (double value) throws Exception {
+        int intValue = (int) value;
+        double frtactionValue = value - intValue;
+        StringBuilder stringBuilder = new StringBuilder();
+        int remainder = 0;
+        int quotient = 0;
+        while (intValue != 0 ){
+            quotient = intValue / 2;
+            remainder = intValue % 2;
+            stringBuilder.append(remainder);
+            intValue = quotient;
+            numCount++;
+            intCount++;
+        }
+        stringBuilder.reverse();
+        int count = 53;
+        double num = 0;
+        while (frtactionValue > 0.00000000000000001){
+            count --;
+            if (count == 0){
+                break;
+            }
+            num = frtactionValue * 2;
+            if (num >= 1){
+                stringBuilder.append(1);
+                frtactionValue = num - 1;
+            }else{
+                stringBuilder.append(0);
+                frtactionValue = num;
+            }
+            numCount++;
+        }
+        String binaryStr = stringBuilder.toString();
+        String filledDouNum = fillFracNum(binaryStr);
+        String tempTruncatedNum = calMZTruncateNum(value,filledDouNum); //For MZ
+//        String tempTruncatedNum = calIntenTruncateNum(filledDouNum); //For Intensity
+        double convertedDouNum = convert2Double(tempTruncatedNum);
+        return convertedDouNum;
+    }
+
+    //Fill up the fraction bits with zeros for those numbers less than 53 bits
+    public static String fillFracNum (String value){
+        int fillNumCount = 53 - numCount;
+        for (int i =0; i < fillNumCount; i++) {
+            value = value + "0";
+        }
+        return value;
+    }
+
+    public static double calculateLog (double value, double base) {
+        return Math.log(value) / Math.log(base);
+    }
+
+    //For MZ values only; Here we define the precision and decide the number of bits that are about to be truncated
+    public static String calMZTruncateNum(double value, String douNum){
+//        int frontPart = (int) value;
+//        if(frontPart <= 0){
+//            frontPart = 1;
+//        }
+        int bits2Zero = (int) (53 + calculateLog(0.0005, 2)-calculateLog(value,2));
+        String truncatedNum = douNum.substring(0,53-bits2Zero);
+        return truncatedNum;
+    }
+
+    //For Intensity values only; Here we define the precision and decide the number of bits that are about to be truncated
+    public static String calIntenTruncateNum (String douNum){
+//        int relativeError = 12; //set the relativeError to 0.0002, where the absolute value of the nearest negative power of two is 12  2^(-12)
+//        int relativeError = 9; //set the relativeError to 0.002, where the absolute value of the nearest negative power of two is 9  2^(-9)
+//          int relativeError = 8; //set the relativeError to 0.004, where the absolute value of the nearest negative power of two is 8  2^(-8)
+          int relativeError = 7; //set the relativeError to 0.008, where the absolute value of the nearest negative power of two is 7  2^(-7)
+//        int relativeError = 6; //set the relativeError to 0.02, where the absolute value of the nearest negative power of two is 6  2^(-6)
+//        int relativeError = 2; //set the relativeError to 0.2, where the absolute value of the nearest negative power of two is 2  2^(-2)
+        int bits2Zero = 53 - relativeError;
+        String truncatedNum = douNum.substring(0,53 - bits2Zero);
+        return truncatedNum;
+    }
+
+
+    //Here we convert those truncated number back to the double
+    public static double convert2Double (String truncatedNum){
+        String fraction = truncatedNum.substring(1);
+        double addedFrac = 0;
+        for(int i = 1; i <= fraction.length(); i++){
+            if (fraction.charAt(i-1) == '1'){
+                addedFrac += Math.pow(2,-i);
+            }
+        }
+        double finalNum = Math.pow(2,(intCount-1)) * (1+addedFrac);
+        return finalNum;
+    }
+
+
+
+}

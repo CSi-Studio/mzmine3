@@ -121,6 +121,30 @@ public class ConversionUtils {
   public static Scan msdkScanToSimpleScan(RawDataFile rawDataFile, MzMLMsScan scan) {
     double[] mzs = scan.getMzValues();
     double[] intensities = convertFloatsToDoubles(scan.getIntensityValues());
+    //For m/z and intensities truncation transformations, you can choose the method to use
+    //m/z maximum absolute errors
+    //    double[] controlledMZs = new double[mzs.length];
+    //    for(int i = 0; i < mzs.length; i++){
+    //      PrecisionControlTask.numCount = 0;
+    //      PrecisionControlTask.intCount = 0;
+    //      controlledMZs[i] = PrecisionControlTask.precisionControl(mzs[i]);
+    //    }
+
+    //intensities maximum relative errors
+    //    double[] controlledIntensities = new double[intensities.length];
+    //    for(int j = 0; j < intensities.length; j++){
+    //      if(intensities[j] == 0){
+    //        controlledIntensities[j] = 0;
+    //      }else {
+    //        PrecisionControlTask.numCount = 0;
+    //        PrecisionControlTask.intCount = 0;
+    //        controlledIntensities[j] = PrecisionControlTask.precisionControl(intensities[j]);
+    //      }
+    //    }
+
+    //if the truncation transformation of m/z and intensities are used,
+    //the below "mzs" or "intensities" needed to be substituted by "controlledMZs" or "controlledIntensities"
+
     return msdkScanToSimpleScan(rawDataFile, scan, mzs, intensities,
         ConversionUtils.msdkToMZmineSpectrumType(scan.getSpectrumType()));
   }
