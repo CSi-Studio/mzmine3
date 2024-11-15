@@ -1238,7 +1238,7 @@
         },
         {
             "moduleName": "net.csibio.aird:aird-sdk",
-            "moduleVersion": "2.4.6",
+            "moduleVersion": "2.5.0",
             "moduleUrls": [
                 "https://github.com/CSi-Studio/Aird-SDK"
             ],
@@ -2478,6 +2478,97 @@
             ]
         },
         {
+            "moduleName": "org.junit.jupiter:junit-jupiter",
+            "moduleVersion": "5.11.3",
+            "moduleUrls": [
+                "https://junit.org/junit5/"
+            ],
+            "moduleLicenses": [
+                {
+                    "moduleLicense": "Eclipse Public License - v 2.0",
+                    "moduleLicenseUrl": "https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt"
+                }
+            ]
+        },
+        {
+            "moduleName": "org.junit.jupiter:junit-jupiter-api",
+            "moduleVersion": "5.11.3",
+            "moduleUrls": [
+                "https://junit.org/junit5/"
+            ],
+            "moduleLicenses": [
+                {
+                    "moduleLicense": "Eclipse Public License - v 2.0",
+                    "moduleLicenseUrl": "https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt"
+                }
+            ]
+        },
+        {
+            "moduleName": "org.junit.jupiter:junit-jupiter-engine",
+            "moduleVersion": "5.11.3",
+            "moduleUrls": [
+                "https://junit.org/junit5/"
+            ],
+            "moduleLicenses": [
+                {
+                    "moduleLicense": "Eclipse Public License - v 2.0",
+                    "moduleLicenseUrl": "https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt"
+                }
+            ]
+        },
+        {
+            "moduleName": "org.junit.jupiter:junit-jupiter-params",
+            "moduleVersion": "5.11.3",
+            "moduleUrls": [
+                "https://junit.org/junit5/"
+            ],
+            "moduleLicenses": [
+                {
+                    "moduleLicense": "Eclipse Public License - v 2.0",
+                    "moduleLicenseUrl": "https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt"
+                }
+            ]
+        },
+        {
+            "moduleName": "org.junit.platform:junit-platform-commons",
+            "moduleVersion": "1.11.3",
+            "moduleUrls": [
+                "https://junit.org/junit5/"
+            ],
+            "moduleLicenses": [
+                {
+                    "moduleLicense": "Eclipse Public License - v 2.0",
+                    "moduleLicenseUrl": "https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt"
+                }
+            ]
+        },
+        {
+            "moduleName": "org.junit.platform:junit-platform-engine",
+            "moduleVersion": "1.11.3",
+            "moduleUrls": [
+                "https://junit.org/junit5/"
+            ],
+            "moduleLicenses": [
+                {
+                    "moduleLicense": "Eclipse Public License - v 2.0",
+                    "moduleLicenseUrl": "https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt"
+                }
+            ]
+        },
+        {
+            "moduleName": "org.junit:junit-bom",
+            "moduleVersion": "5.11.3",
+            "moduleUrls": [
+                "https://junit.org/junit5/"
+            ],
+            "moduleLicenses": [
+                {
+                    "moduleLicense": "Eclipse Public License - v 2.0",
+                    "moduleLicenseUrl": "https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt"
+                }
+            ]
+        },
+        {
             "moduleName": "org.keycloak:keycloak-adapter-core",
             "moduleVersion": "24.0.1",
             "moduleUrls": [
@@ -2961,6 +3052,19 @@
                 {
                     "moduleLicense": "GNU LESSER GENERAL PUBLIC LICENSE, Version 3",
                     "moduleLicenseUrl": "https://www.gnu.org/licenses/lgpl-3.0"
+                }
+            ]
+        },
+        {
+            "moduleName": "org.opentest4j:opentest4j",
+            "moduleVersion": "1.3.0",
+            "moduleUrls": [
+                "https://github.com/ota4j-team/opentest4j"
+            ],
+            "moduleLicenses": [
+                {
+                    "moduleLicense": "Apache License, Version 2.0",
+                    "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0"
                 }
             ]
         },

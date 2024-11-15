@@ -37,6 +37,7 @@ public enum MzMLCompressionType {
   NUMPRESS_POSINT("MS:1002313", "MS-Numpress positive integer compression"), //
   NUMPRESS_SHLOGF("MS:1002314", "MS-Numpress short logged float compression"), //
   ZLIB("MS:1000574", "zlib compression"), //
+  AIRD_COMBOCOMP("MS:1002844", "aird comboComp compression"),
   NO_COMPRESSION("MS:1000576", "no compression"), //
   NUMPRESS_LINPRED_ZLIB("MS:1002746",
       "MS-Numpress linear prediction compression followed by zlib compression"), //
@@ -84,16 +85,22 @@ public enum MzMLCompressionType {
 
   public boolean isZlibCompressed() {
     return switch (this) {
-      case NUMPRESS_LINPRED, NO_COMPRESSION, NUMPRESS_SHLOGF, NUMPRESS_POSINT -> false;
+      case NUMPRESS_LINPRED, NO_COMPRESSION, NUMPRESS_SHLOGF, NUMPRESS_POSINT,AIRD_COMBOCOMP -> false;
       case ZLIB, NUMPRESS_LINPRED_ZLIB, NUMPRESS_POSINT_ZLIB, NUMPRESS_SHLOGF_ZLIB -> true;
+    };
+  }
+
+  public boolean isAirdComboComp() {
+    return switch (this) {
+      case NUMPRESS_LINPRED, NO_COMPRESSION, NUMPRESS_SHLOGF, NUMPRESS_POSINT, ZLIB, NUMPRESS_LINPRED_ZLIB, NUMPRESS_POSINT_ZLIB, NUMPRESS_SHLOGF_ZLIB -> false;
+      case  AIRD_COMBOCOMP-> true;
     };
   }
 
   public boolean isNumpress() {
     return switch (this) {
-      case NO_COMPRESSION, ZLIB -> false;
-      case NUMPRESS_LINPRED, NUMPRESS_SHLOGF, NUMPRESS_POSINT, NUMPRESS_LINPRED_ZLIB, NUMPRESS_POSINT_ZLIB, NUMPRESS_SHLOGF_ZLIB ->
-          true;
+      case NO_COMPRESSION, ZLIB , AIRD_COMBOCOMP-> false;
+      case NUMPRESS_LINPRED, NUMPRESS_SHLOGF, NUMPRESS_POSINT, NUMPRESS_LINPRED_ZLIB, NUMPRESS_POSINT_ZLIB, NUMPRESS_SHLOGF_ZLIB ->true;
     };
   }
 }

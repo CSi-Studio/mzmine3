@@ -49,10 +49,6 @@ public class MzMLExportTask extends AbstractTask {
 
   private MSDKMethod<?> msdkMethod = null;
 
-  /**
-   * @param dataFile
-   * @param parameters
-   */
   public MzMLExportTask(RawDataFile dataFile, File outFilename, @NotNull Instant moduleCallDate) {
     super(null, moduleCallDate); // no new data stored -> null
     this.dataFile = dataFile;
@@ -89,8 +85,10 @@ public class MzMLExportTask extends AbstractTask {
       MZmineToMSDKRawDataFile msdkDataFile = new MZmineToMSDKRawDataFile(dataFile);
 
       if (outFilename.getName().toLowerCase().endsWith("mzml")) {
-        msdkMethod = new MzMLFileExportMethod(msdkDataFile, outFilename, MzMLCompressionType.ZLIB,
-            MzMLCompressionType.ZLIB);
+       /* msdkMethod = new MzMLFileExportMethod(msdkDataFile, outFilename, MzMLCompressionType.ZLIB,
+            MzMLCompressionType.ZLIB);*/
+        msdkMethod = new MzMLFileExportMethod(msdkDataFile, outFilename, MzMLCompressionType.AIRD_COMBOCOMP,
+                MzMLCompressionType.AIRD_COMBOCOMP);
       }
 
       if (outFilename.getName().toLowerCase().endsWith("cdf")) {

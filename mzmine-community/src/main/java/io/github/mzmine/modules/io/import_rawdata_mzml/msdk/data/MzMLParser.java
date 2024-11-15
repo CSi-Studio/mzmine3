@@ -632,7 +632,10 @@ public class MzMLParser {
     if (binaryInfo.getCompressionType() == MzMLCompressionType.NO_COMPRESSION) {
       binaryInfo.setCompressionType(newCompression);
     } else {
-      if (newCompression == MzMLCompressionType.ZLIB) {
+      if(newCompression == MzMLCompressionType.AIRD_COMBOCOMP){
+        binaryInfo.setCompressionType(MzMLCompressionType.AIRD_COMBOCOMP);
+      }
+      else if (newCompression == MzMLCompressionType.ZLIB) {
         switch (binaryInfo.getCompressionType()) {
           case NUMPRESS_LINPRED ->
               binaryInfo.setCompressionType(MzMLCompressionType.NUMPRESS_LINPRED_ZLIB);

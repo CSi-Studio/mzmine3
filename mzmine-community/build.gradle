@@ -172,10 +172,11 @@ dependencies {
     implementation "edu.ucar:netcdf4:4.5.5"
     implementation 'org.jetbrains:annotations:22.0.0'
     implementation 'net.sourceforge.jmol:jmol:14.31.10'
+    implementation group: 'net.csibio.aird', name: 'aird-sdk', version: '2.5.0'
 
     implementation(libs.bundles.jfreechart)
     // search icons here
-//    https://kordamp.org/ikonli/cheat-sheet-bootstrapicons.html
+    // https://kordamp.org/ikonli/cheat-sheet-bootstrapicons.html
     implementation(libs.bundles.ikonli)
     implementation(libs.bundles.graphstream)
     implementation(libs.bundles.slf4j)
