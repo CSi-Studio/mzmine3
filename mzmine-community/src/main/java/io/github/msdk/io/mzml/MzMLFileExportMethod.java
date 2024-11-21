@@ -469,8 +469,8 @@ public class MzMLFileExportMethod implements MSDKMethod<Void> {
         xmlStreamWriter.writeAttribute(MzMLTags.ATTR_COUNT, "2");
 
         // <binaryDataArray> (m/z, intensity)
-        byte[] mzBuffer;
-        byte[] intensityBuffer;
+        byte[] mzBuffer = null;
+        byte[] intensityBuffer = null;
         if(doubleArrayCompression == MzMLCompressionType.AIRD_COMBOCOMP){
           mzBuffer = MzMLPeaksEncoder.comboCompEncode(scan).getLeft();
           intensityBuffer = MzMLPeaksEncoder.comboCompEncode(scan).getRight();
@@ -478,7 +478,6 @@ public class MzMLFileExportMethod implements MSDKMethod<Void> {
           mzBuffer = MzMLPeaksEncoder.encodeDouble(scan.getMzValues(), doubleArrayCompression);
           intensityBuffer = MzMLPeaksEncoder.encodeFloat(scan.getIntensityValues(), floatArrayCompression);
         }
-
         xmlStreamWriter.writeCharacters("\n            ");
         xmlStreamWriter.writeStartElement(MzMLTags.TAG_BINARY_DATA_ARRAY);
         xmlStreamWriter.writeAttribute(MzMLTags.ATTR_ENCODED_LENGTH,
@@ -674,8 +673,8 @@ public class MzMLFileExportMethod implements MSDKMethod<Void> {
         xmlStreamWriter.writeAttribute(MzMLTags.ATTR_COUNT, "2");
 
         // <binaryDataArray> (rt, intensity)
-        byte[] rtBuffer;
-        byte[] intensityBuffer2;
+        byte[] rtBuffer = null;
+        byte[] intensityBuffer2 = null;
         if(doubleArrayCompression == MzMLCompressionType.AIRD_COMBOCOMP){
           rtBuffer = MzMLPeaksEncoder.comboCompEncode(chromatogram).getLeft();
           intensityBuffer2 = MzMLPeaksEncoder.comboCompEncode(chromatogram).getRight();
@@ -683,7 +682,6 @@ public class MzMLFileExportMethod implements MSDKMethod<Void> {
           rtBuffer = MzMLPeaksEncoder.encodeFloat(chromatogram.getRetentionTimes(null), floatArrayCompression);
           intensityBuffer2 = MzMLPeaksEncoder.encodeFloat(chromatogram.getIntensityValues(), floatArrayCompression);
         }
-
         xmlStreamWriter.writeCharacters("\n          ");
         xmlStreamWriter.writeStartElement(MzMLTags.TAG_BINARY_DATA_ARRAY);
         xmlStreamWriter.writeAttribute(MzMLTags.ATTR_ENCODED_LENGTH, String.valueOf(rtBuffer.length));
