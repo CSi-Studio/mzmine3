@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
  * Enumeration of different compression types which are parsed by the MzML Parser
  */
 public enum MzMLCompressionType {
+  AIRD_COMBOCOMP("MS:1002844", "aird combo compression"),
   NUMPRESS_LINPRED("MS:1002312", "MS-Numpress linear prediction compression"), //
   NUMPRESS_POSINT("MS:1002313", "MS-Numpress positive integer compression"), //
   NUMPRESS_SHLOGF("MS:1002314", "MS-Numpress short logged float compression"), //
@@ -48,8 +49,8 @@ public enum MzMLCompressionType {
   private static final Map<String, MzMLCompressionType> map = Arrays.stream(MzMLCompressionType.values()).collect(
       Collectors.toMap(MzMLCompressionType::getAccession, v -> v));
 
-  private String accession;
-  private String name;
+  private final String accession;
+  private final String name;
 
   MzMLCompressionType(String accession, String name) {
     this.accession = accession;
@@ -82,16 +83,22 @@ public enum MzMLCompressionType {
     return name;
   }
 
+  public boolean isAirdComboComp() {
+    return switch (this) {
+      case NUMPRESS_LINPRED, NO_COMPRESSION, NUMPRESS_SHLOGF, NUMPRESS_POSINT, ZLIB, NUMPRESS_LINPRED_ZLIB, NUMPRESS_POSINT_ZLIB, NUMPRESS_SHLOGF_ZLIB -> false;
+      case AIRD_COMBOCOMP -> true;
+    };
+  }
   public boolean isZlibCompressed() {
     return switch (this) {
-      case NUMPRESS_LINPRED, NO_COMPRESSION, NUMPRESS_SHLOGF, NUMPRESS_POSINT -> false;
+      case NUMPRESS_LINPRED, NO_COMPRESSION, NUMPRESS_SHLOGF, NUMPRESS_POSINT, AIRD_COMBOCOMP -> false;
       case ZLIB, NUMPRESS_LINPRED_ZLIB, NUMPRESS_POSINT_ZLIB, NUMPRESS_SHLOGF_ZLIB -> true;
     };
   }
 
   public boolean isNumpress() {
     return switch (this) {
-      case NO_COMPRESSION, ZLIB -> false;
+      case NO_COMPRESSION, ZLIB, AIRD_COMBOCOMP -> false;
       case NUMPRESS_LINPRED, NUMPRESS_SHLOGF, NUMPRESS_POSINT, NUMPRESS_LINPRED_ZLIB, NUMPRESS_POSINT_ZLIB, NUMPRESS_SHLOGF_ZLIB ->
           true;
     };

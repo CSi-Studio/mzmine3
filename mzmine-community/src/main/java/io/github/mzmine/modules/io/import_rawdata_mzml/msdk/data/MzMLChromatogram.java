@@ -300,9 +300,7 @@ public class MzMLChromatogram implements Chromatogram {
       }
 
       if (!productIsolationWindow.isPresent()) {
-        logger.severe(
-            "Couldn't find product isolation window for chromotgram (#" + getChromatogramNumber()
-                + ")");
+        logger.severe(STR."Couldn't find product isolation window for chromotgram (#\{getChromatogramNumber()})");
         return Collections.emptyList();
       }
 

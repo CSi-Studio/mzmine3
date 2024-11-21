@@ -35,23 +35,11 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import io.github.msdk.datamodel.*;
+import io.github.msdk.io.mzml.data.*;
 import org.jetbrains.annotations.NotNull;
 import org.apache.commons.codec.digest.DigestUtils;
 import io.github.msdk.MSDKException;
 import io.github.msdk.MSDKMethod;
-import io.github.msdk.io.mzml.data.MzMLArrayType;
-import io.github.msdk.io.mzml.data.MzMLBitLength;
-import io.github.msdk.io.mzml.data.MzMLCV;
-import io.github.msdk.io.mzml.data.MzMLCVGroup;
-import io.github.msdk.io.mzml.data.MzMLCVParam;
-import io.github.msdk.io.mzml.data.MzMLCompressionType;
-import io.github.msdk.io.mzml.data.MzMLMsScan;
-import io.github.msdk.io.mzml.data.MzMLPeaksEncoder;
-import io.github.msdk.io.mzml.data.MzMLPrecursorElement;
-import io.github.msdk.io.mzml.data.MzMLPrecursorSelectedIon;
-import io.github.msdk.io.mzml.data.MzMLProduct;
-import io.github.msdk.io.mzml.data.MzMLRawDataFile;
-import io.github.msdk.io.mzml.data.MzMLTags;
 import javolution.xml.internal.stream.XMLStreamWriterImpl;
 import javolution.xml.stream.XMLStreamException;
 

@@ -30,13 +30,12 @@ import io.github.mzmine.datamodel.Frame;
 import io.github.mzmine.datamodel.impl.PasefMsMsInfoImpl;
 
 public class BuildingImsMsMsInfo {
-
   private final double precursorMz;
   private final float collisionEnergy;
   private final int precursorCharge;
   private final int fragmentFrameNumber;
   private final int firstSpectrumNumber;
-  private int parentFrameNumber;
+  private final int parentFrameNumber;
   private int lastSpectrumNumber;
 
   public BuildingImsMsMsInfo(final double precursorMz, final float collisionEnergy,

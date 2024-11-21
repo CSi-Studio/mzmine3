@@ -139,7 +139,7 @@ public class MSDKmzMLImportTask extends AbstractTask {
     this.file = fileOfInputStream;
     this.fis = fisToOpen;
     this.project = project;
-    description = "Importing raw data file: " + fileOfInputStream.getName();
+    description = STR."Importing raw data file: \{fileOfInputStream.getName()}";
     this.scanProcessorConfig = scanProcessorConfig;
     this.parameters = parameters;
     this.module = module;

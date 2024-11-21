@@ -38,21 +38,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Used to store lists of arrays into a single DoubleBuffer to safe memory.
  *
- * @author https://github.com/SteffenHeu
+ * @author <a href="https://github.com/SteffenHeu">...</a>
  */
 public class StorageUtils {
-
+   private static final Logger logger = Logger.getLogger(StorageUtils.class.getName());
   public static <T> List<double[][]> mapTo2dDoubleArrayList(List<T> objects,
       Function<T, double[]> firstDimension, Function<T, double[]> secondDimension) {
-    return objects.stream().<double[][]>mapMulti((scan, c) -> {
-      c.accept(new double[][]{firstDimension.apply(scan), secondDimension.apply(scan)});
-    }).toList();
+    return objects.stream().<double[][]>mapMulti((scan, c) -> c.accept(new double[][]{firstDimension.apply(scan), secondDimension.apply(scan)})).toList();
   }
 
   /**
@@ -83,7 +83,7 @@ public class StorageUtils {
     System.arraycopy(generatedOffsets, 0, offsets, 0, generatedOffsets.length);
 
     final int numDp =
-        offsets[offsets.length - 1] + mzIntensities.get(mzIntensities.size() - 1)[0].length;
+        offsets[offsets.length - 1] + mzIntensities.getLast()[0].length;
     final DoubleBuffer[] storedValues = new DoubleBuffer[2];
     double[] storageBuffer = new double[numDp];
 
@@ -170,7 +170,7 @@ public class StorageUtils {
    */
   @NotNull
   public static DoubleBuffer storeValuesToDoubleBuffer(@Nullable final MemoryMapStorage storage,
-      @NotNull final double[] values) {
+      final double @NotNull [] values) {
     if (values.length == 0) {
       return AbstractStorableSpectrum.EMPTY_BUFFER;
     }
@@ -180,7 +180,7 @@ public class StorageUtils {
       try {
         buffer = storage.storeData(values);
       } catch (IOException e) {
-        e.printStackTrace();
+        logger.log(Level.SEVERE, "Could not store values in memory map storage", e);
         buffer = DoubleBuffer.wrap(values);
       }
     } else {
@@ -201,7 +201,7 @@ public class StorageUtils {
    */
   @NotNull
   public static FloatBuffer storeValuesToFloatBuffer(@Nullable final MemoryMapStorage storage,
-      @NotNull final float[] values) {
+      final float @NotNull [] values) {
     if (values.length == 0) {
       return AbstractStorableSpectrum.EMPTY_FLOAT_BUFFER;
     }
@@ -211,7 +211,7 @@ public class StorageUtils {
       try {
         buffer = storage.storeData(values);
       } catch (IOException e) {
-        e.printStackTrace();
+        logger.log(Level.SEVERE, "Could not store values in memory map storage", e);
         buffer = FloatBuffer.wrap(values);
       }
     } else {
@@ -232,14 +232,14 @@ public class StorageUtils {
    */
   @NotNull
   public static IntBuffer storeValuesToIntBuffer(@Nullable final MemoryMapStorage storage,
-      @NotNull final int[] values) {
+      final int @NotNull [] values) {
 
     IntBuffer buffer;
     if (storage != null) {
       try {
         buffer = storage.storeData(values);
       } catch (IOException e) {
-        e.printStackTrace();
+        logger.log(Level.SEVERE, "Could not store values in memory map storage", e);
         buffer = IntBuffer.wrap(values);
       }
     } else {
