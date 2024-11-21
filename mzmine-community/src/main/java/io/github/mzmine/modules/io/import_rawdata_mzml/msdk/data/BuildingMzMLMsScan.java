@@ -48,7 +48,6 @@ import io.github.mzmine.modules.io.import_rawdata_all.spectral_processor.ScanImp
 import io.github.mzmine.modules.io.import_rawdata_all.spectral_processor.SimpleSpectralArrays;
 import io.github.mzmine.util.DataPointUtils;
 import io.github.mzmine.util.MemoryMapStorage;
-
 import java.io.IOException;
 import java.nio.DoubleBuffer;
 import java.util.ArrayList;
@@ -59,7 +58,6 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
