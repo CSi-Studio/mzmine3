@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.logging.Logger;
-import java.util.zip.DataFormatException;
 import java.util.zip.InflaterInputStream;
 
 import net.csibio.aird.compressor.ComboComp;
@@ -40,7 +39,7 @@ import io.github.msdk.io.mzml.util.MSNumpress;
  */
 public class MzMLPeaksDecoder {
     private static final Logger logger = Logger.getLogger(MzMLPeaksDecoder.class.getName());
-    private static final double mzPrecision = 100000d;
+    private static final double precision = 100000d; // m/z, rt
     private static final double intPrecision = 10d;
 
     /**
@@ -316,7 +315,7 @@ public class MzMLPeaksDecoder {
         } else if (arrayType == MzMLArrayType.TIME || arrayType == MzMLArrayType.MZ) {
             int[] decodeArray = ComboComp.decode(new IntegratedVarByteWrapper(), new ZstdWrapper(), bytes);
             for (int i = 0; i < decodeArray.length; i++) {
-                data[i] = (float) (decodeArray[i] / mzPrecision);
+                data[i] = (float) (decodeArray[i] / precision);
             }
         }
     }
@@ -326,7 +325,7 @@ public class MzMLPeaksDecoder {
         if (arrayType == MzMLArrayType.MZ || arrayType == MzMLArrayType.TIME) {
             int[] decodeArray = ComboComp.decode(new IntegratedVarByteWrapper(), new ZstdWrapper(), bytes);
             for (int i = 0; i < decodeArray.length; i++) {
-                data[i] = decodeArray[i] / mzPrecision;
+                data[i] = decodeArray[i] / precision;
             }
         } else if (arrayType == MzMLArrayType.INTENSITY) {
             int[] decodeArray = ComboComp.decode(new VarByteWrapper(), new ZstdWrapper(), bytes);

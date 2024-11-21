@@ -18,7 +18,6 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.zip.Deflater;
-
 import io.github.msdk.MSDKException;
 import io.github.msdk.datamodel.Chromatogram;
 import io.github.msdk.datamodel.MsScan;
@@ -38,9 +37,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class MzMLPeaksEncoder {
     private static final Logger logger = LoggerFactory.getLogger(MzMLPeaksEncoder.class);
-    private static final int mzPrecision = 100000;
+    private static final int precision = 100000; //m/z, rt
     private static final int intPrecision = 10;
-    private static final int rtPrecision = 10000;
 
     /**
      * <p>
@@ -242,7 +240,7 @@ public abstract class MzMLPeaksEncoder {
     private static int fetchMz(double target) {
         int result = -1;
         try {
-            result = (int) Math.round(target * mzPrecision);
+            result = (int) Math.round(target * precision);
         } catch (Exception e) {
             logger.error("Exception occurred while fetching mz", e);
         }
@@ -263,7 +261,7 @@ public abstract class MzMLPeaksEncoder {
     private static int fetchRt(double target) {
         int result = -1;
         try {
-            result = (int) Math.round(target * rtPrecision);
+            result = (int) Math.round(target * precision);
         } catch (Exception e) {
             logger.error("Exception occurred while fetching rt", e);
         }

@@ -58,7 +58,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class MzMLPeaksDecoder {
     private static final Logger logger = Logger.getLogger(MzMLPeaksDecoder.class.getName());
-    private static final double mzPrecision = 100000d;
+    private static final double precision = 100000d; //m/z, rt
     private static final double intPrecision = 10d;
 
     /**
@@ -454,7 +454,7 @@ public class MzMLPeaksDecoder {
         if (arrayType == MzMLArrayType.MZ || arrayType == MzMLArrayType.TIME) {
             int[] decodeArray = ComboComp.decode(new IntegratedVarByteWrapper(), new ZstdWrapper(), bytes);
             for (int i = 0; i < decodeArray.length; i++) {
-                data[i] = decodeArray[i] / mzPrecision;
+                data[i] = decodeArray[i] / precision;
             }
         } else if (arrayType == MzMLArrayType.INTENSITY) {
             int[] decodeArray = ComboComp.decode(new VarByteWrapper(), new ZstdWrapper(), bytes);

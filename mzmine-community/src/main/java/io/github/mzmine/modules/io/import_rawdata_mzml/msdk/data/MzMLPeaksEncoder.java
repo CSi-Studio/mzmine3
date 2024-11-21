@@ -40,7 +40,6 @@ import java.util.zip.Deflater;
  *
  */
 public abstract class MzMLPeaksEncoder {
-
   /**
    * <p>
    * encodeDouble.

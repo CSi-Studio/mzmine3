@@ -39,7 +39,6 @@ import java.util.Optional;
  * </p>
  */
 public class MzMLFileExportMethod implements MSDKMethod<Void> {
-
   private static final String dataProcessingId = "MSDK_mzml_export";
   private static final String softwareId = "MSDK";
   private static final String XML_ENCODING = "UTF-8";
