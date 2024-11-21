@@ -222,6 +222,11 @@ dependencies {
     // the defacto standard parser in jackson?
     implementation(libs.woodstox.core)
     implementation(libs.aalto.xml)
+
+    // https://mvnrepository.com/artifact/net.csibio.aird/aird-sdk
+    implementation group: 'net.csibio.aird', name: 'aird-sdk', version: '2.4.6'
+
+
 }
 
 /*

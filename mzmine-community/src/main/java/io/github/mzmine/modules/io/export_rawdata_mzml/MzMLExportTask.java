@@ -27,6 +27,7 @@ package io.github.mzmine.modules.io.export_rawdata_mzml;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.github.msdk.MSDKMethod;
@@ -41,82 +42,80 @@ import org.jetbrains.annotations.NotNull;
 
 public class MzMLExportTask extends AbstractTask {
 
-  private Logger logger = Logger.getLogger(this.getClass().getName());
-  private final RawDataFile dataFile;
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final RawDataFile dataFile;
 
-  // User parameters
-  private File outFilename;
+    // User parameters
+    private final File outFilename;
 
-  private MSDKMethod<?> msdkMethod = null;
+    private MSDKMethod<?> msdkMethod = null;
 
-  /**
-   * @param dataFile
-   * @param parameters
-   */
-  public MzMLExportTask(RawDataFile dataFile, File outFilename, @NotNull Instant moduleCallDate) {
-    super(null, moduleCallDate); // no new data stored -> null
-    this.dataFile = dataFile;
-    this.outFilename = outFilename;
-  }
-
-  /**
-   * @see io.github.mzmine.taskcontrol.Task#getTaskDescription()
-   */
-  public String getTaskDescription() {
-    return "Exporting file " + dataFile + " to " + outFilename;
-  }
-
-  /**
-   * @see io.github.mzmine.taskcontrol.Task#getFinishedPercentage()
-   */
-  public double getFinishedPercentage() {
-    if ((msdkMethod == null) || (msdkMethod.getFinishedPercentage() == null))
-      return 0;
-    return msdkMethod.getFinishedPercentage().doubleValue();
-  }
-
-  /**
-   * @see Runnable#run()
-   */
-  public void run() {
-
-    try {
-
-      setStatus(TaskStatus.PROCESSING);
-
-      logger.info("Started export of file " + dataFile + " to " + outFilename);
-
-      MZmineToMSDKRawDataFile msdkDataFile = new MZmineToMSDKRawDataFile(dataFile);
-
-      if (outFilename.getName().toLowerCase().endsWith("mzml")) {
-        msdkMethod = new MzMLFileExportMethod(msdkDataFile, outFilename, MzMLCompressionType.ZLIB,
-            MzMLCompressionType.ZLIB);
-      }
-
-      if (outFilename.getName().toLowerCase().endsWith("cdf")) {
-        msdkMethod = new NetCDFFileExportMethod(msdkDataFile, outFilename);
-      }
-
-      if (isCanceled())
-        return;
-      msdkMethod.execute();
-
-      setStatus(TaskStatus.FINISHED);
-
-      logger.info("Finished export of file " + dataFile + " to " + outFilename);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      setStatus(TaskStatus.ERROR);
-      setErrorMessage("Error in file export: " + e.getMessage());
+    public MzMLExportTask(RawDataFile dataFile, File outFilename, @NotNull Instant moduleCallDate) {
+        super(null, moduleCallDate); // no new data stored -> null
+        this.dataFile = dataFile;
+        this.outFilename = outFilename;
     }
 
-  }
+    /**
+     * @see io.github.mzmine.taskcontrol.Task#getTaskDescription()
+     */
+    public String getTaskDescription() {
+        return STR."Exporting file \{dataFile} to \{outFilename}";
+    }
 
-  @Override
-  public void cancel() {
-    super.cancel();
-    if (msdkMethod != null)
-      msdkMethod.cancel();
-  }
+    /**
+     * @see io.github.mzmine.taskcontrol.Task#getFinishedPercentage()
+     */
+    public double getFinishedPercentage() {
+        if ((msdkMethod == null) || (msdkMethod.getFinishedPercentage() == null))
+            return 0;
+        return msdkMethod.getFinishedPercentage().doubleValue();
+    }
+
+    /**
+     * @see Runnable#run()
+     */
+    public void run() {
+
+        try {
+
+            setStatus(TaskStatus.PROCESSING);
+
+            logger.info(STR."Started export of file \{dataFile} to \{outFilename}");
+
+            MZmineToMSDKRawDataFile msdkDataFile = new MZmineToMSDKRawDataFile(dataFile);
+
+            if (outFilename.getName().toLowerCase().endsWith("mzml")) {
+               /* msdkMethod = new MzMLFileExportMethod(msdkDataFile, outFilename, MzMLCompressionType.ZLIB,
+                    MzMLCompressionType.ZLIB);*/
+                msdkMethod = new MzMLFileExportMethod(msdkDataFile, outFilename, MzMLCompressionType.AIRD_COMBOCOMP,
+                        MzMLCompressionType.AIRD_COMBOCOMP);
+            }
+
+            if (outFilename.getName().toLowerCase().endsWith("cdf")) {
+                msdkMethod = new NetCDFFileExportMethod(msdkDataFile, outFilename);
+            }
+
+            if (isCanceled())
+                return;
+            msdkMethod.execute();
+
+            setStatus(TaskStatus.FINISHED);
+
+            logger.info(STR."Finished export of file \{dataFile} to \{outFilename}");
+
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Error in netcdf export", e);
+            setStatus(TaskStatus.ERROR);
+            setErrorMessage(STR."Error in file export: \{e.getMessage()}");
+        }
+
+    }
+
+    @Override
+    public void cancel() {
+        super.cancel();
+        if (msdkMethod != null)
+            msdkMethod.cancel();
+    }
 }
