@@ -41,14 +41,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
-
-import javolution.text.CharArray;
 import net.csibio.aird.compressor.ComboComp;
 import net.csibio.aird.compressor.bytecomp.ZstdWrapper;
 import net.csibio.aird.compressor.intcomp.VarByteWrapper;
 import net.csibio.aird.compressor.sortedintcomp.IntegratedVarByteWrapper;
-import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -60,136 +56,6 @@ public class MzMLPeaksDecoder {
     private static final Logger logger = Logger.getLogger(MzMLPeaksDecoder.class.getName());
     private static final double precision = 100000d; //m/z, rt
     private static final double intPrecision = 10d;
-
-    /**
-     * Converts a base64 encoded mz or intensity string used in mzML files to an array of floats. If
-     * the original precision was 64 bit, you still get floats as output.
-     * <p>
-     * Deprecated, should use the array methods
-     * {@link #decodeToDoubleAsArray(String, MzMLBinaryDataInfo, double[])}
-     *
-     * @param binaryDataInfo meta-info about the compressed data
-     * @param data           an array of float.
-     * @return a float array containing the decoded values
-     * @throws IOException   if any.
-     * @throws MSDKException if any. //   * @param inputStream a {@link InputStream} object.
-     */
-    @Deprecated
-    public static float[] decodeToFloat(CharArray binaryData, MzMLBinaryDataInfo binaryDataInfo,
-                                        float[] data) throws IOException, MSDKException {
-
-        int lengthIn = binaryDataInfo.getEncodedLength();
-        int numPoints = binaryDataInfo.getArrayLength();
-        InputStream is;
-
-        InputStream inputStream = new ByteArrayInputStream(binaryData.toString().getBytes());
-
-        is = Base64.getDecoder().wrap(inputStream);
-
-        // for some reason there sometimes might be zero length <peaks> tags
-        // (ms2 usually)
-        // in this case we just return an empty result
-        if (lengthIn == 0) {
-            return new float[0];
-        }
-
-        InflaterInputStream iis;
-        LittleEndianDataInputStream dis;
-        byte[] bytes;
-
-        if (data == null || data.length < numPoints) {
-            data = new float[numPoints];
-        }
-
-        // first check for zlib compression, inflation must be done before
-        // NumPress
-        dis = switch (binaryDataInfo.getCompressionType()) {
-            case ZLIB, NUMPRESS_LINPRED_ZLIB, NUMPRESS_POSINT_ZLIB, NUMPRESS_SHLOGF_ZLIB -> {
-                iis = new InflaterInputStream(is);
-                yield new LittleEndianDataInputStream(iis);
-            }
-            default -> new LittleEndianDataInputStream(is);
-        };
-
-        /*if(binaryDataInfo.getCompressionType() == MzMLCompressionType.AIRD_COMBOCOMP){
-            bytes = IOUtils.toByteArray(dis);
-            comboCompDecodeFloat(bytes, binaryDataInfo, data);
-            return data;
-        }*/
-
-        // Now we can check for NumPress
-        int numDecodedDoubles;
-        switch (binaryDataInfo.getCompressionType()) {
-            case NUMPRESS_LINPRED:
-            case NUMPRESS_LINPRED_ZLIB:
-                bytes = IOUtils.toByteArray(dis);
-                numDecodedDoubles = MSNumpress.decodeLinear(bytes, bytes.length, data);
-                if (numDecodedDoubles < 0) {
-                    throw new MSDKException("MSNumpress linear decoder failed");
-                }
-                return data;
-            case NUMPRESS_POSINT:
-            case NUMPRESS_POSINT_ZLIB:
-                bytes = IOUtils.toByteArray(dis);
-                numDecodedDoubles = MSNumpress.decodePic(bytes, bytes.length, data);
-                if (numDecodedDoubles < 0) {
-                    throw new MSDKException("MSNumpress positive integer decoder failed");
-                }
-                return data;
-            case NUMPRESS_SHLOGF:
-            case NUMPRESS_SHLOGF_ZLIB:
-                bytes = IOUtils.toByteArray(dis);
-                numDecodedDoubles = MSNumpress.decodeSlof(bytes, bytes.length, data);
-                if (numDecodedDoubles < 0) {
-                    throw new MSDKException("MSNumpress short logged float decoder failed");
-                }
-                return data;
-            default:
-                break;
-        }
-
-        Integer precision = switch (binaryDataInfo.getBitLength()) {
-            case THIRTY_TWO_BIT_FLOAT, THIRTY_TWO_BIT_INTEGER -> 32;
-            case SIXTY_FOUR_BIT_FLOAT, SIXTY_FOUR_BIT_INTEGER -> 64;
-            default -> {
-                dis.close();
-                throw new IllegalArgumentException(
-                        "Precision MUST be specified and be either 32-bit or 64-bit, "
-                                + "if MS-NUMPRESS compression was not used");
-            }
-        };
-
-        try {
-            switch (precision) {
-                case (32): {
-                    for (int i = 0; i < numPoints; i++) {
-                        data[i] = dis.readFloat();
-                    }
-                    break;
-                }
-                case (64): {
-                    for (int i = 0; i < numPoints; i++) {
-                        data[i] = (float) dis.readDouble();
-                    }
-                    break;
-                }
-                default: {
-                    dis.close();
-                    throw new IllegalArgumentException(
-                            "Precision can only be 32/64 bits, other values are not valid.");
-                }
-            }
-        } catch (EOFException eof) {
-            // If the stream reaches EOF unexpectedly, it is probably because the particular
-            // scan/chromatogram didn't pass the Predicate
-            throw new MSDKException(
-                    "Couldn't obtain values. Please make sure the scan/chromatogram passes the Predicate.");
-        } finally {
-            dis.close();
-        }
-
-        return data;
-    }
 
     /**
      * Converts a base64 encoded mz or intensity string used in mzML files to an array of doubles. If
@@ -326,96 +192,6 @@ public class MzMLPeaksDecoder {
         }
         decompressor.end();
         return decompressedData;
-    }
-
-    /**
-     * This method is slower than the direct array version
-     * {@link #decodeToDoubleAsArray(String, MzMLBinaryDataInfo)} Converts a base64 encoded mz or
-     * intensity string used in mzML files to an array of doubles. If the original precision was 32
-     * bit, you still get doubles as output.
-     *
-     * @param binaryDataInfo meta-info about encoded data
-     * @param data           an array of double.
-     * @return a double array containing the decoded values
-     * @throws IOException         if any.
-     * @throws MSDKException       if any. //   * @param inputStream a {@link InputStream} object.
-     */
-    @Deprecated
-    public static double[] decodeToDoubleAsStream(String binaryData, MzMLBinaryDataInfo binaryDataInfo, double[] data) throws IOException, MSDKException {
-        int lengthIn = binaryDataInfo.getEncodedLength();
-        int numPoints = binaryDataInfo.getArrayLength();
-
-        // for some reason there sometimes might be zero length <peaks> tags
-        // (ms2 usually)
-        // in this case we just return an empty result
-        if (lengthIn == 0) {
-            return new double[0];
-        }
-
-        byte[] decoded = Base64.getDecoder().decode(binaryData);
-        InputStream is = new ByteArrayInputStream(decoded);
-
-        if (data == null || data.length < numPoints) {
-            data = new double[numPoints];
-        }
-
-        // first check for zlib compression, inflation must be done before
-        // NumPress
-        var compression = binaryDataInfo.getCompressionType();
-        if (compression.isZlibCompressed()) {
-            is = new InflaterInputStream(is);
-        }
-
-        // always little endian
-        var dis = new LittleEndianDataInputStream(is);
-
-        // Now we can check for NumPress
-        if (compression.isNumpress()) {
-            byte[] bytes = IOUtils.toByteArray(dis);
-            data = decompressIfNumpress(binaryDataInfo, data, bytes);
-
-            try {
-                dis.close();
-            } catch (IOException e) {
-                logger.info("Exception when closing stream in parser, all worked as expected though");
-            }
-            return data;
-        }
-
-        // to read doubles
-        try {
-            switch (binaryDataInfo.getBitLength()) {
-                case THIRTY_TWO_BIT_FLOAT -> {
-                    for (int i = 0; i < data.length; i++) {
-                        data[i] = dis.readFloat();
-                    }
-                }
-                case THIRTY_TWO_BIT_INTEGER -> {
-                    for (int i = 0; i < data.length; i++) {
-                        data[i] = dis.readInt();
-                    }
-                }
-                case SIXTY_FOUR_BIT_FLOAT -> {
-                    for (int i = 0; i < data.length; i++) {
-                        data[i] = dis.readDouble();
-                    }
-                }
-                case SIXTY_FOUR_BIT_INTEGER -> {
-                    for (int i = 0; i < data.length; i++) {
-                        data[i] = dis.readLong();
-                    }
-                }
-            }
-        } catch (EOFException eof) {
-            logger.log(Level.WARNING, STR."Error in PeaksDecoder \{eof.getMessage()}", eof);
-            // If the stream reaches EOF unexpectedly, it is probably because the particular
-            // scan/chromatogram didn't pass the Predicate
-            throw new MSDKException(
-                    "Couldn't obtain values. Please make sure the scan/chromatogram passes the Predicate.");
-        } catch (Exception e) {
-            logger.log(Level.WARNING, STR."Error in PeaksDecoder \{e.getMessage()}", e);
-        }
-        return data;
     }
 
     private static double[] decompressIfNumpress(final MzMLBinaryDataInfo binaryDataInfo,
