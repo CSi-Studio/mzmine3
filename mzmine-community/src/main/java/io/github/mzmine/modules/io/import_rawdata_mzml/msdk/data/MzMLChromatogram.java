@@ -27,16 +27,8 @@ package io.github.mzmine.modules.io.import_rawdata_mzml.msdk.data;
 
 import com.google.common.collect.Range;
 import io.github.msdk.MSDKRuntimeException;
-import io.github.msdk.datamodel.ActivationInfo;
-import io.github.msdk.datamodel.ActivationType;
-import io.github.msdk.datamodel.Chromatogram;
+import io.github.msdk.datamodel.*;
 import io.github.msdk.datamodel.ChromatogramType;
-import io.github.msdk.datamodel.IonAnnotation;
-import io.github.msdk.datamodel.IsolationInfo;
-import io.github.msdk.datamodel.RawDataFile;
-import io.github.msdk.datamodel.SeparationType;
-import io.github.msdk.datamodel.SimpleActivationInfo;
-import io.github.msdk.datamodel.SimpleIsolationInfo;
 import io.github.mzmine.modules.io.import_rawdata_mzml.ConversionUtils;
 import io.github.mzmine.util.MemoryMapStorage;
 import java.io.InputStream;
@@ -84,8 +76,8 @@ public class MzMLChromatogram implements Chromatogram {
    * @param chromatogramNumber the Chromatogram number
    * @param numOfDataPoints    the number of data points in the retention time and intensity arrays
    */
-  MzMLChromatogram(@NotNull MzMLRawDataFile dataFile, String chromatogramId,
-      Integer chromatogramNumber, Integer numOfDataPoints) {
+  MzMLChromatogram(@NotNull MzMLRawDataFile dataFile, @NotNull String chromatogramId,
+                   @NotNull Integer chromatogramNumber, @NotNull Integer numOfDataPoints) {
     this.cvParams = new MzMLCVGroup();
     this.dataFile = dataFile;
     this.chromatogramId = chromatogramId;

@@ -26,16 +26,12 @@
 package io.github.mzmine.datamodel.impl;
 
 import com.google.common.collect.Range;
-import io.github.msdk.datamodel.ActivationInfo;
-import io.github.msdk.datamodel.IsolationInfo;
-import io.github.msdk.datamodel.MsScan;
-import io.github.msdk.datamodel.MsSpectrumType;
-import io.github.msdk.datamodel.PolarityType;
-import io.github.msdk.datamodel.RawDataFile;
-import io.github.msdk.datamodel.SimpleIsolationInfo;
+import io.github.msdk.datamodel.*;
 import io.github.msdk.util.tolerances.MzTolerance;
 import io.github.mzmine.datamodel.Scan;
 import io.github.mzmine.datamodel.msms.DDAMsMsInfo;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -70,17 +66,17 @@ public class MZmineToMSDKMsScan implements MsScan {
   }
 
   @Override
-  public MsSpectrumType getSpectrumType() {
+  public @NotNull MsSpectrumType getSpectrumType() {
     return MsSpectrumType.valueOf(mzmineScan.getSpectrumType().name());
   }
 
   @Override
-  public Integer getNumberOfDataPoints() {
+  public @NotNull Integer getNumberOfDataPoints() {
     return mzmineScan.getNumberOfDataPoints();
   }
 
   @Override
-  public double[] getMzValues(double[] array) {
+  public double @NotNull [] getMzValues(double[] array) {
     if (array == null || array.length < mzmineScan.getNumberOfDataPoints())
       array = new double[mzmineScan.getNumberOfDataPoints()];
     mzmineScan.getMzValues(array);
@@ -88,7 +84,7 @@ public class MZmineToMSDKMsScan implements MsScan {
   }
 
   @Override
-  public float[] getIntensityValues(float[] array) {
+  public float @NotNull [] getIntensityValues(float[] array) {
     if (array == null || array.length < mzmineScan.getNumberOfDataPoints())
       array = new float[mzmineScan.getNumberOfDataPoints()];
     for (int i = 0; i < mzmineScan.getNumberOfDataPoints(); i++) {
@@ -98,8 +94,8 @@ public class MZmineToMSDKMsScan implements MsScan {
   }
 
   @Override
-  public Float getTIC() {
-    return mzmineScan.getTIC().floatValue();
+  public @NotNull Float getTIC() {
+    return Objects.requireNonNull(mzmineScan.getTIC()).floatValue();
   }
 
   @Override
@@ -118,7 +114,7 @@ public class MZmineToMSDKMsScan implements MsScan {
   }
 
   @Override
-  public Integer getScanNumber() {
+  public @NotNull Integer getScanNumber() {
     return mzmineScan.getScanNumber();
   }
 
@@ -133,7 +129,7 @@ public class MZmineToMSDKMsScan implements MsScan {
   }
 
   @Override
-  public Integer getMsLevel() {
+  public @NotNull Integer getMsLevel() {
     return mzmineScan.getMSLevel();
   }
 
@@ -153,12 +149,12 @@ public class MZmineToMSDKMsScan implements MsScan {
   }
 
   @Override
-  public List<IsolationInfo> getIsolations() {
+  public @NotNull List<IsolationInfo> getIsolations() {
     return isolations;
   }
 
   @Override
-  public PolarityType getPolarity() {
+  public @NotNull PolarityType getPolarity() {
     return PolarityType.valueOf(mzmineScan.getPolarity().name());
   }
 

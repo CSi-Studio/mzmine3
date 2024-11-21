@@ -33,17 +33,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+
+import io.github.msdk.datamodel.*;
 import org.jetbrains.annotations.NotNull;
 import org.apache.commons.codec.digest.DigestUtils;
 import io.github.msdk.MSDKException;
 import io.github.msdk.MSDKMethod;
-import io.github.msdk.datamodel.ActivationInfo;
-import io.github.msdk.datamodel.Chromatogram;
-import io.github.msdk.datamodel.IsolationInfo;
-import io.github.msdk.datamodel.MsScan;
-import io.github.msdk.datamodel.MsSpectrumType;
-import io.github.msdk.datamodel.PolarityType;
-import io.github.msdk.datamodel.RawDataFile;
 import io.github.msdk.io.mzml.data.MzMLArrayType;
 import io.github.msdk.io.mzml.data.MzMLBitLength;
 import io.github.msdk.io.mzml.data.MzMLCV;
@@ -64,7 +59,7 @@ import javolution.xml.stream.XMLStreamException;
 /**
  * <p>
  * This class contains methods which can be used to write data contained in a
- * {@link o.github.msdk.datamodel.rawdata.RawDataFile RawDataFile} to a file, in mzML format
+ * {@link io.github.msdk.datamodel.RawDataFile RawDataFile} to a file, in mzML format
  * </p>
  */
 public class MzMLFileExportMethod implements MSDKMethod<Void> {
@@ -99,7 +94,7 @@ public class MzMLFileExportMethod implements MSDKMethod<Void> {
    * Constructor for MzMLFileExportMethod.
    * </p>
    *
-   * @param rawDataFile the input {@link o.github.msdk.datamodel.rawdata.RawDataFile RawDataFile}
+   * @param rawDataFile the input {@link io.github.msdk.datamodel.RawDataFile RawDataFile}
    *        which contains the data to be exported
    * @param target the target {@link File File} to write the data, in mzML format
    * @param doubleArrayCompression compression type for <code>double[]</code> which are encoded
@@ -119,13 +114,13 @@ public class MzMLFileExportMethod implements MSDKMethod<Void> {
    *
    * <p>
    * Execute the process of writing the data from the the input
-   * {@link o.github.msdk.datamodel.rawdata.RawDataFile RawDataFile} to the target {@link File File}
+   * {@link io.github.msdk.datamodel.RawDataFile RawDataFile} to the target {@link File File}
    * </p>
    */
   @Override
   public Void execute() throws MSDKException {
 
-    logger.info("Started export of " + rawDataFile.getName() + " to " + target);
+    logger.info(STR."Started export of \{rawDataFile.getName()} to \{target}");
 
     List<MsScan> scans = rawDataFile.getScans();
     List<Chromatogram> chromatograms = rawDataFile.getChromatograms();
