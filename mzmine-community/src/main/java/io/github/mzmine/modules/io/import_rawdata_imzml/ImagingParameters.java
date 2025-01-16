@@ -33,6 +33,9 @@ import io.github.mzmine.modules.io.import_rawdata_bruker_tdf.datamodel.sql.TDFMa
 import io.github.mzmine.modules.io.import_rawdata_bruker_tdf.datamodel.sql.TDFMaldiFrameLaserInfoTable;
 import io.github.mzmine.modules.io.import_rawdata_bruker_tdf.datamodel.sql.TDFMetaDataTable;
 import io.github.mzmine.modules.io.import_rawdata_bruker_tdf.datamodel.sql.TDFMetaDataTable.Keys;
+import net.csibio.aird.bean.AirdInfo;
+
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /*
@@ -179,6 +182,60 @@ public class ImagingParameters {
       }
       if(Double.compare(lateralWidth, 0d) == 0) {
         lateralWidth = maxNumberOfPixelX * pixelWidth;
+      }
+    }
+  }
+
+  public ImagingParameters(AirdInfo airdInfo){
+    maxNumberOfPixelX = airdInfo.getMsiInfo().getImageInfo().getMaxPixelX();
+    maxNumberOfPixelY = airdInfo.getMsiInfo().getImageInfo().getMaxPixelY();
+    maxNumberOfPixelZ = airdInfo.getMsiInfo().getImageInfo().getMaxPixelZ();
+
+    lateralWidth = maxNumberOfPixelX * airdInfo.getMsiInfo().getImageInfo().getPixelSizeX();
+    lateralHeight = maxNumberOfPixelY * airdInfo.getMsiInfo().getImageInfo().getPixelSizeY();
+    pixelHeight = airdInfo.getMsiInfo().getImageInfo().getMaxPixelY();
+    pixelWidth = airdInfo.getMsiInfo().getImageInfo().getMaxPixelX();
+    spectraPerPixel = airdInfo.getMsiInfo().getImageInfo().getSpectraPerPixel();
+    minMZ = airdInfo.getMsiInfo().getImageInfo().getMinMZ();
+    maxMZ = airdInfo.getMsiInfo().getImageInfo().getMaxMZ();
+
+    var scanInfo = airdInfo.getMsiInfo().getScanInfo();
+    if(scanInfo!=null) {
+      var scanSequence = scanInfo.getScanSequence();
+      if (scanSequence != null) {
+        if (scanSequence.equalsIgnoreCase("TOP DOWN")) {
+          vStart = VerticalStart.TOP;
+        } else {
+          vStart = VerticalStart.BOTTOM;
+        }
+      }
+      var airdscanDirection = scanInfo.getScanDirection();
+      if (airdscanDirection != null) {
+        if (airdscanDirection.equalsIgnoreCase("LINESCAN LEFT RIGHT")) {
+          hStart = HorizontalStart.LEFT;
+        } else {
+          hStart = HorizontalStart.RIGHT;
+        }
+      }
+
+      var scanPattern = scanInfo.getScanPattern();
+      if (scanPattern != null) {
+        if ( scanPattern.toUpperCase().contains("FLY BACK")) {
+          pattern = Pattern.FLY_BACK;
+        } else if (scanPattern.toUpperCase().contains("MEANDER")) {
+          pattern = Pattern.MEANDER;
+        } else {
+          pattern = Pattern.RANDOM;
+        }
+      }
+
+      var scanType = airdInfo.getMsiInfo().getScanInfo().getScanType();
+      if (scanType != null) {
+        if (scanType.equalsIgnoreCase("VERTICAL")) {
+          scanDirection = ScanDirection.VERTICAL;
+        } else {
+          scanDirection = ScanDirection.HORIZONTAL;
+        }
       }
     }
   }

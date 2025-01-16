@@ -57,7 +57,9 @@ import io.github.mzmine.util.exceptions.ExceptionUtils;
 import io.github.mzmine.util.scans.ScanUtils;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
@@ -119,7 +121,7 @@ public class ImzMLImportTask extends AbstractTask {
    */
   @Override
   public void run() {
-
+    long start = System.currentTimeMillis();
     setStatus(TaskStatus.PROCESSING);
     logger.info("Started parsing file " + file);
 
@@ -227,7 +229,7 @@ public class ImzMLImportTask extends AbstractTask {
 
     logger.info("Finished parsing " + file + ", parsed " + parsedScans + " scans");
     setStatus(TaskStatus.FINISHED);
-
+    System.out.println(file.getPath()  + " : " + (System.currentTimeMillis() - start)+"毫秒");
   }
 
   private int convertScanIdToScanNumber(String scanId) {

@@ -25,13 +25,19 @@
 
 package io.github.mzmine.modules.io.import_rawdata_aird;
 
+import io.github.mzmine.datamodel.ImagingRawDataFile;
 import io.github.mzmine.datamodel.MZmineProject;
 import io.github.mzmine.datamodel.RawDataFile;
 import io.github.mzmine.datamodel.features.SimpleFeatureListAppliedMethod;
+import io.github.mzmine.datamodel.impl.IMSImagingRawDataFileImpl;
+import io.github.mzmine.datamodel.impl.SimpleDataPoint;
+import io.github.mzmine.main.MZmineCore;
 import io.github.mzmine.modules.MZmineModule;
 import io.github.mzmine.modules.io.import_rawdata_aird.loader.DDALoader;
 import io.github.mzmine.modules.io.import_rawdata_aird.loader.DIALoader;
+import io.github.mzmine.modules.io.import_rawdata_aird.loader.MSIMaldiLoader;
 import io.github.mzmine.modules.io.import_rawdata_all.spectral_processor.ScanImportProcessorConfig;
+import io.github.mzmine.modules.io.import_rawdata_imzml.ImagingParameters;
 import io.github.mzmine.parameters.ParameterSet;
 import io.github.mzmine.project.impl.RawDataFileImpl;
 import io.github.mzmine.taskcontrol.AbstractTask;
@@ -40,7 +46,9 @@ import io.github.mzmine.util.MemoryMapStorage;
 import io.github.mzmine.util.date.DateTimeUtils;
 import io.github.mzmine.util.exceptions.ExceptionUtils;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.csibio.aird.bean.AirdInfo;
@@ -49,6 +57,7 @@ import net.csibio.aird.enums.AirdType;
 import net.csibio.aird.parser.BaseParser;
 import net.csibio.aird.parser.DDAParser;
 import net.csibio.aird.parser.DIAParser;
+import net.csibio.aird.parser.MSIMaldiParser;
 import net.csibio.aird.util.AirdScanUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,26 +104,37 @@ public class AirdImportTask extends AbstractTask {
    */
   @Override
   public void run() {
+    long start = System.currentTimeMillis();
     setStatus(TaskStatus.PROCESSING);
     BaseParser parser = null;
+    System.out.println(file.getPath()  + " -1: " + (System.currentTimeMillis() - start)+" ms");
     try {
       parser = BaseParser.buildParser(file.getPath());
 
       airdInfo = parser.getAirdInfo();
+      System.out.println(file.getPath()  + " 0: " + (System.currentTimeMillis() - start)+" ms");
       if (airdInfo == null) {
         setStatus(TaskStatus.ERROR);
         setErrorMessage(
             "Parsing Cancelled, The aird index file(.json or .index, metadata) not exists or the index file is broken.");
         return;
       }
-
-      newMZmineFile = new RawDataFileImpl(this.file.getName(), file.getAbsolutePath(), storage);
+      if(AirdType.getType(airdInfo.getType()) == AirdType.MSI_MALDI)
+      {
+        newMZmineFile = MZmineCore.createNewImagingFile(this.file.getName(), file.getAbsolutePath(), storage);
+        ((ImagingRawDataFile)newMZmineFile).setImagingParam(new ImagingParameters(airdInfo));
+      }
+      else {
+        newMZmineFile = new RawDataFileImpl(this.file.getName(), file.getAbsolutePath(), storage);
+      }
       newMZmineFile.setStartTimeStamp(
           DateTimeUtils.parseOrElse(airdInfo.getStartTimeStamp(), null));
       totalScans = airdInfo.getTotalCount().intValue();
+      System.out.println(file.getPath()  + " 1: " + (System.currentTimeMillis() - start)+" ms");
       switch (AirdType.getType(airdInfo.getType())) {
         case DDA -> DDALoader.load(this, (DDAParser) parser);
         case DIA -> DIALoader.load(this, (DIAParser) parser);
+        case MSI_MALDI -> MSIMaldiLoader.load(this, (MSIMaldiParser) parser);
         default -> {
           setStatus(TaskStatus.ERROR);
           setErrorMessage("Unsupported Aird Type:" + airdInfo.getType());
@@ -139,10 +159,11 @@ public class AirdImportTask extends AbstractTask {
     }
 
     logger.info("Finished parsing " + file + ", parsed " + parsedScans + " scans");
-
+    System.out.println(file.getPath()  + " 2: " + (System.currentTimeMillis() - start)+" ms");
     newMZmineFile.getAppliedMethods()
         .add(new SimpleFeatureListAppliedMethod(module, parameters, getModuleCallDate()));
     project.addFile(newMZmineFile);
+    System.out.println(file.getPath()  + " 3: " + (System.currentTimeMillis() - start)+" ms");
     setStatus(TaskStatus.FINISHED);
   }
 
