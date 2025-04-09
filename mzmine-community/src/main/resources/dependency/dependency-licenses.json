@@ -1238,7 +1238,7 @@
         },
         {
             "moduleName": "net.csibio.aird:aird-sdk",
-            "moduleVersion": "2.4.6",
+            "moduleVersion": "2.5.0",
             "moduleUrls": [
                 "https://github.com/CSi-Studio/Aird-SDK"
             ],

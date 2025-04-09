@@ -228,6 +228,10 @@ public class ImagingParameters {
           pattern = Pattern.RANDOM;
         }
       }
+      else
+      {
+        pattern = Pattern.RANDOM;
+      }
 
       var scanType = airdInfo.getMsiInfo().getScanInfo().getScanType();
       if (scanType != null) {

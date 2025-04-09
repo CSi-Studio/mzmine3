@@ -104,15 +104,11 @@ public class AirdImportTask extends AbstractTask {
    */
   @Override
   public void run() {
-    long start = System.currentTimeMillis();
     setStatus(TaskStatus.PROCESSING);
     BaseParser parser = null;
-    System.out.println(file.getPath()  + " -1: " + (System.currentTimeMillis() - start)+" ms");
     try {
       parser = BaseParser.buildParser(file.getPath());
-
       airdInfo = parser.getAirdInfo();
-      System.out.println(file.getPath()  + " 0: " + (System.currentTimeMillis() - start)+" ms");
       if (airdInfo == null) {
         setStatus(TaskStatus.ERROR);
         setErrorMessage(
@@ -130,7 +126,6 @@ public class AirdImportTask extends AbstractTask {
       newMZmineFile.setStartTimeStamp(
           DateTimeUtils.parseOrElse(airdInfo.getStartTimeStamp(), null));
       totalScans = airdInfo.getTotalCount().intValue();
-      System.out.println(file.getPath()  + " 1: " + (System.currentTimeMillis() - start)+" ms");
       switch (AirdType.getType(airdInfo.getType())) {
         case DDA -> DDALoader.load(this, (DDAParser) parser);
         case DIA -> DIALoader.load(this, (DIAParser) parser);
@@ -159,11 +154,9 @@ public class AirdImportTask extends AbstractTask {
     }
 
     logger.info("Finished parsing " + file + ", parsed " + parsedScans + " scans");
-    System.out.println(file.getPath()  + " 2: " + (System.currentTimeMillis() - start)+" ms");
     newMZmineFile.getAppliedMethods()
         .add(new SimpleFeatureListAppliedMethod(module, parameters, getModuleCallDate()));
     project.addFile(newMZmineFile);
-    System.out.println(file.getPath()  + " 3: " + (System.currentTimeMillis() - start)+" ms");
     setStatus(TaskStatus.FINISHED);
   }
 
