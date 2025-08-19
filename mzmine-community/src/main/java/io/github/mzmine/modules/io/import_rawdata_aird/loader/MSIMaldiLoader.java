@@ -19,6 +19,7 @@ import net.csibio.aird.parser.DDAParser;
 import net.csibio.aird.parser.MSIMaldiParser;
 
 import java.util.List;
+import io.github.mzmine.util.scans.ScanUtils;
 
 public class MSIMaldiLoader {
 
@@ -47,7 +48,8 @@ public class MSIMaldiLoader {
     }
     int scanNumber = 0;
     for (Spectrum ms1 : msList) {
-      SimpleImagingScan ms1Scan = buildSimpleScan(task, ms1,scanNumber, null, MsLevel.MS1.getCode(),polarityType, massSpectrumType, spectraPosition);
+      massSpectrumType = ScanUtils.detectSpectrumType(ms1.getMzs(),ms1.getInts());
+      SimpleImagingScan ms1Scan = buildSimpleScan(task, ms1, scanNumber, null, MsLevel.MS1.getCode(),polarityType, massSpectrumType, spectraPosition);
       task.parsedScans++;
       task.newMZmineFile.addScan(ms1Scan);
       scanNumber++;
